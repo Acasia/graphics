@@ -25,14 +25,15 @@
 //<NOT DRAW ALL>#define GLTF_MODEL "BoxTextured/SimpleMorph.gltf"
 //<CLIPING SPACE PROBLEM>#define GLTF_MODEL "BoxTextured/SimpleSparseAccessor.gltf"
 
-// 3d <I don't know, it renderd 2D or 3D.>
+// 3D
 
 //#define GLTF_MODEL "BoxTextured/Box.gltf"
 //#define GLTF_MODEL "BoxTextured/BoxInterleaved.gltf"
-//<NOT TEXTUREING>#define GLTF_MODEL "BoxTextured/BoxTextured.gltf"
-#define GLTF_MODEL "BoxTextured/BoxTexturedNonPowerOfTwo.gltf"
+//#define GLTF_MODEL "BoxTextured/BoxTextured.gltf"
+//#define GLTF_MODEL "BoxTextured/BoxTexturedNonPowerOfTwo.gltf"
+//<NOT DRAWING COLORFUL> #define GLTF_MODEL "BoxTextured/BoxVertexColors.gltf"
 //#define GLTF_MODEL "BoxTextured/Duck.gltf"
-
+//<NOT WORKING>#define GLTF_MODEL "BoxTextured/2CylinderEngine.gltf"
 
 #include "../glTF/tiny_gltf.h"
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
