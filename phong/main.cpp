@@ -372,19 +372,19 @@ void init_buffer_objects()
           glBufferData(bufferView.target, bufferView.byteLength,
             &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
         }
-        else if (attrib.first.compare("COLOR_0") == 0)
-        {
-            glGenBuffers(1, &color_buffer);
-            glBindBuffer(bufferView.target, color_buffer);
-            glBufferData(bufferView.target, bufferView.byteLength,
-                &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
-        }
         else if (attrib.first.compare("TEXCOORD_0") == 0)
         {
           glGenBuffers(1, &texcoord_buffer);
           glBindBuffer(bufferView.target, texcoord_buffer);
           glBufferData(bufferView.target, bufferView.byteLength,
             &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+        }
+        else if (attrib.first.compare("COLOR_0") == 0)
+        {
+            glGenBuffers(1, &color_buffer);
+            glBindBuffer(bufferView.target, color_buffer);
+            glBufferData(bufferView.target, bufferView.byteLength,
+                &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
         }
       }
     }
@@ -480,6 +480,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		material_shininess += 0.5f;
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
 		material_shininess -= 0.5f;
+
+  std::cout << camera.position() << std::endl;    
 }
 
 void frambuffer_size_callback(GLFWwindow * window, int width, int height)
@@ -662,6 +664,9 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
             glUniform1i(loc_u_texture, 0);
           }
         }
+        else{
+
+        }
       }
     }
   
@@ -843,7 +848,7 @@ int main(void)
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
 
-  load_model(model, "BoxTextured/BoxTextured.gltf");
+  load_model(model, "BoxTextured/Duck.gltf");
    const std::vector<tinygltf::Node>& nodes = model.nodes;
 
   for (const tinygltf::Scene& scene : model.scenes)
@@ -868,7 +873,10 @@ int main(void)
   // GPU의 VBO를 초기화하는 함수 호출
   
   init_buffer_objects();
-  init_texture_objects();
+  if(witch)
+  {
+    init_texture_objects();
+  }
 
   // key_callback
   glfwSetKeyCallback(window, key_callback);
