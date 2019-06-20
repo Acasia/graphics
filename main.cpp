@@ -19,7 +19,7 @@
 
 #include "../common/transform.hpp"
 
-#define MODELPATH "gltfmodel/TriangleWithoutIndices.gltf"
+#define MODELPATH "gltfmodel/SimpleMeshes.gltf"
 #define VSHADER_PATH "./shader/TriangleWithoutIndices_vertex.glsl"
 #define FSHADER_PATH "./shader/TriangleWithoutIndices_fragment.glsl"
 
