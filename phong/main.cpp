@@ -216,7 +216,6 @@ GLuint create_shader_from_file(const std::string& filename, GLuint shader_type)
 // vertex shader와 fragment shader를 링크시켜 program을 생성하는 함수
 void init_shader_program()
 {
-<<<<<<< Updated upstream
   GLuint vertex_shader;
   GLuint fragment_shader;
 
@@ -872,15 +871,12 @@ int main(void)
 
   init_state();
   init_shader_program();
-<<<<<<< Updated upstream
-=======
   // std::cout << "a3" << std::endl;
 
   load_model(model, "BoxTextured/TriangleWithoutIndices.gltf");
   //load_model(model, "BoxTextured/Duck.gltf");
   //load_model(model, "BoxTextured/Triangle.gltf");
   // std::cout << "a4" << std::endl;
->>>>>>> Stashed changes
 
   // GPU의 VBO를 초기화하는 함수 호출
   
