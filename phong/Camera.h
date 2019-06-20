@@ -13,7 +13,7 @@ public:
 
 public:
 	Camera()
-		: position_(0, 0.0f, 2.0f),
+		: position_(0, 0.0f, 5.0f),
 		front_dir_(0, 0, -1),
 		up_dir_(0, 1, 0),
 		right_dir_(1, 0, 0),
