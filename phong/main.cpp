@@ -16,10 +16,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#define MODELPATH "BoxTextured/SimpleMeshes.gltf"
-#define VSHADER_PATH "./shader/TriangleWithoutIndices_vertex.glsl"
-#define FSHADER_PATH "./shader/TriangleWithoutIndices_fragment.glsl"
-
 #include "../glTF/tiny_gltf.h"
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
@@ -217,13 +213,13 @@ GLuint create_shader_from_file(const std::string& filename, GLuint shader_type)
 void init_shader_program()
 {
   GLuint vertex_shader
-    = create_shader_from_file(VSHADER_PATH, GL_VERTEX_SHADER);
+    = create_shader_from_file("./shader/vertex.glsl", GL_VERTEX_SHADER);
 
   std::cout << "vertex_shader id: " << vertex_shader << std::endl;
   assert(vertex_shader != 0);
 
   GLuint fragment_shader
-    = create_shader_from_file(FSHADER_PATH, GL_FRAGMENT_SHADER);
+    = create_shader_from_file("./shader/fragment.glsl", GL_FRAGMENT_SHADER);
 
   std::cout << "fragment_shader id: " << fragment_shader << std::endl;
   assert(fragment_shader != 0);
@@ -801,7 +797,7 @@ int main(void)
   init_state();
   init_shader_program();
 
-  load_model(model, MODELPATH);
+  load_model(model, "BoxTextured/Duck.gltf");
 
   // GPU의 VBO를 초기화하는 함수 호출
   init_buffer_objects();
