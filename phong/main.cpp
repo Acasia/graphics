@@ -17,6 +17,24 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
+// 2D
+//#define GLTF_MODEL "BoxTextured/TriangleWithoutIndices.gltf"
+//#define GLTF_MODEL "BoxTextured/Triangle.gltf"
+//#define GLTF_MODEL "BoxTextured/SimpleMeshes.gltf"
+
+//<NOT DRAW ALL>#define GLTF_MODEL "BoxTextured/SimpleMorph.gltf"
+//<CLIPING SPACE PROBLEM>#define GLTF_MODEL "BoxTextured/SimpleSparseAccessor.gltf"
+
+// 3D
+
+//#define GLTF_MODEL "BoxTextured/Box.gltf"
+//#define GLTF_MODEL "BoxTextured/BoxInterleaved.gltf"
+//#define GLTF_MODEL "BoxTextured/BoxTextured.gltf"
+//#define GLTF_MODEL "BoxTextured/BoxTexturedNonPowerOfTwo.gltf"
+//<NOT DRAWING COLORFUL> #define GLTF_MODEL "BoxTextured/BoxVertexColors.gltf"
+//#define GLTF_MODEL "BoxTextured/Duck.gltf"
+//<NOT WORKING>#define GLTF_MODEL "BoxTextured/2CylinderEngine.gltf"
+
 #include "../glTF/tiny_gltf.h"
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
@@ -847,7 +865,7 @@ int main(void)
 
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
-
+  
   load_model(model, "BoxTextured/Duck.gltf");
    const std::vector<tinygltf::Node>& nodes = model.nodes;
 
