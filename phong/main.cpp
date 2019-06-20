@@ -112,7 +112,7 @@ kmuvcl::math::vec3f view_position_wc;
 
 kmuvcl::math::vec3f light_position_wc = kmuvcl::math::vec3f(0.0f, 0.8f, 0.8f);
 kmuvcl::math::vec4f light_diffuse = kmuvcl::math::vec4f(1.0f, 1.0f, 1.0f, 1.0f);
-kmuvcl::math::vec4f light_specular = kmuvcl::math::vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+kmuvcl::math::vec4f light_specular = kmuvcl::math::vec4f(0.1f, 0.1f, 0.1f, 0.1f);
 
 kmuvcl::math::vec4f material_specular = kmuvcl::math::vec4f(1.0f, 1.0f, 1.0f, 1.0f);
 float               material_shininess = 1.2f;
@@ -795,29 +795,22 @@ void draw_scene()
     for (size_t i = 0; i < scene.nodes.size(); ++i)
     {
       const tinygltf::Node& node = nodes[scene.nodes[i]];
-      if( node.children.size() < 0 || node.children.size() == 0 || nodes.size() < 2 )
-      {
-        render_object();
-      }
-      else
-      {
-        curr = std::chrono::system_clock::now();
-        std::chrono::duration<float> elaped_seconds = (curr - prev);
-        prev = curr;
-        if (g_is_animation)
-        {            
-          g_angle += 30.0f * elaped_seconds.count();
-          if (g_angle > 25200.0f)
-          {
-            g_angle = 0.0f;
-          }
+      curr = std::chrono::system_clock::now();
+      std::chrono::duration<float> elaped_seconds = (curr - prev);
+      prev = curr;
+      if (g_is_animation)
+      {            
+        g_angle += 30.0f * elaped_seconds.count();
+        if (g_angle > 25200.0f)
+        {
+          g_angle = 0.0f;
         }
-        // mat_model = kmuvcl::math::rotate(g_angle*0.7f, 0.0f, 0.0f, 1.0f);
-        // mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
-        // mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
-        mat_model = kmuvcl::math::rotate(g_angle*1.0f, 0.0f, 1.0f, 0.0f)*mat_model;
-        draw_node(node, mat_model);
       }
+      // mat_model = kmuvcl::math::rotate(g_angle*0.7f, 0.0f, 0.0f, 1.0f);
+      // mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
+      // mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
+      mat_model = kmuvcl::math::rotate(g_angle*1.0f, 0.0f, 1.0f, 0.0f)*mat_model;
+      draw_node(node, mat_model);
     }
   }
 }
@@ -850,7 +843,7 @@ int main(void)
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
 
-  load_model(model, "BoxTextured/SimpleMeshes.gltf");
+  load_model(model, "BoxTextured/BoxTextured.gltf");
    const std::vector<tinygltf::Node>& nodes = model.nodes;
 
   for (const tinygltf::Scene& scene : model.scenes)
@@ -858,7 +851,7 @@ int main(void)
     for (size_t i = 0; i < scene.nodes.size(); ++i)
     {
       const tinygltf::Node& node = nodes[scene.nodes[i]];
-      if( node.children.size() < 0 || node.children.size() == 0 || nodes.size() < 2 )
+      if( (node.children.size() < 0 || node.children.size() == 0) && nodes.size() < 2 )
       {
         witch = false;
       }
@@ -887,8 +880,14 @@ int main(void)
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    set_transform();
-    draw_scene();
+    if(witch)
+    {
+      set_transform();
+      draw_scene();
+    }
+    else{
+      render_object();
+    }
 
     // Swap front and back buffers
     glfwSwapBuffers(window);
