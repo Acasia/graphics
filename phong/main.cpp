@@ -16,7 +16,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#define MODELPATH "gltfmodel/SimpleMeshes.gltf"
+#define MODELPATH "BoxTextured/SimpleMeshes.gltf"
 #define VSHADER_PATH "./shader/TriangleWithoutIndices_vertex.glsl"
 #define FSHADER_PATH "./shader/TriangleWithoutIndices_fragment.glsl"
 
