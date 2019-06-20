@@ -87,6 +87,7 @@ GLint   loc_a_texcoord;
 
 GLint   loc_u_PVM;
 GLint   loc_u_texture;
+GLint   loc_a_color;      // attribute 변수 a_color 위치
 
 GLuint create_shader_from_file(const std::string& filename, GLuint shader_type);
 void init_shader_program();
@@ -140,6 +141,7 @@ GLuint position_buffer;
 GLuint normal_buffer;
 GLuint texcoord_buffer;
 GLuint index_buffer;
+GLuint color_buffer; // GPU 메모리에서 color_buffer의 위치
 
 GLuint texid;
 
@@ -252,7 +254,7 @@ void init_shader_program()
   loc_u_M = glGetUniformLocation(program, "u_M");
 
   loc_u_texture = glGetUniformLocation(program, "u_texture");
-
+  loc_a_color = glGetAttribLocation(program, "a_color");
   loc_a_position = glGetAttribLocation(program, "a_position");
   loc_a_texcoord = glGetAttribLocation(program, "a_texcoord");
 
@@ -313,14 +315,16 @@ void init_buffer_objects()
   {
     for (const tinygltf::Primitive& primitive : mesh.primitives)
     {
-      const tinygltf::Accessor& accessor = accessors[primitive.indices];
-      const tinygltf::BufferView& bufferView = bufferViews[accessor.bufferView];
-      const tinygltf::Buffer& buffer = buffers[bufferView.buffer];
+      if(primitive.indices != -1)
+      {  const tinygltf::Accessor& accessor = accessors[primitive.indices];
+        const tinygltf::BufferView& bufferView = bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = buffers[bufferView.buffer];
 
-      glGenBuffers(1, &index_buffer);
-      glBindBuffer(bufferView.target, index_buffer);
-      glBufferData(bufferView.target, bufferView.byteLength,
-        &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &index_buffer);
+        glBindBuffer(bufferView.target, index_buffer);
+        glBufferData(bufferView.target, bufferView.byteLength,
+            &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);}
 
       for (const auto& attrib : primitive.attributes)
       {
@@ -341,6 +345,13 @@ void init_buffer_objects()
           glBindBuffer(bufferView.target, normal_buffer);
           glBufferData(bufferView.target, bufferView.byteLength,
             &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+        }
+        else if (attrib.first.compare("COLOR_0") == 0)
+        {
+            glGenBuffers(1, &color_buffer);
+            glBindBuffer(bufferView.target, color_buffer);
+            glBufferData(bufferView.target, bufferView.byteLength,
+                &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
         }
         else if (attrib.first.compare("TEXCOORD_0") == 0)
         {
@@ -664,6 +675,72 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
   glUseProgram(0);
 }
 
+//2D render
+void render_object()
+{
+    // 특정 쉐이더 프로그램 사용
+    glUseProgram(program);
+
+    const std::vector<tinygltf::Mesh>& meshes = model.meshes;
+    const std::vector<tinygltf::Accessor>& accessors = model.accessors;
+    const std::vector<tinygltf::BufferView>& bufferViews = model.bufferViews;
+    
+    for (size_t i = 0; i < meshes.size(); ++i)
+    {
+        const tinygltf::Mesh& mesh = meshes[i];
+
+          for (size_t j = 0; j < mesh.primitives.size(); ++j)
+          {
+              const tinygltf::Primitive& primitive = mesh.primitives[j];
+
+              int count = 0;
+
+              for (std::map<std::string, int>::const_iterator it = primitive.attributes.cbegin();
+                  it != primitive.attributes.cend();
+                  ++it)
+              {
+                  const std::pair<std::string, int>& attrib = *it;
+
+                  const int accessor_index = attrib.second;
+                  const tinygltf::Accessor& accessor = accessors[accessor_index];
+
+                  count = accessor.count;
+
+                  const tinygltf::BufferView& bufferView = bufferViews[accessor.bufferView];
+
+                  if (attrib.first.compare("POSITION") == 0)
+                  {
+                      glBindBuffer(bufferView.target, position_buffer);
+                      glEnableVertexAttribArray(loc_a_position);
+                      glVertexAttribPointer(loc_a_position,
+                          accessor.type, accessor.componentType,
+                          accessor.normalized ? GL_TRUE : GL_FALSE, 0,
+                          BUFFER_OFFSET(accessor.byteOffset));
+                  }
+                  else if (attrib.first.compare("COLOR_0") == 0)
+                  {
+                      glBindBuffer(bufferView.target, color_buffer);
+                      glEnableVertexAttribArray(loc_a_color);
+                      glVertexAttribPointer(loc_a_color,
+                          accessor.type, accessor.componentType,
+                          accessor.normalized ? GL_TRUE : GL_FALSE, 0,
+                          BUFFER_OFFSET(accessor.byteOffset));
+                  }
+              }
+
+              glDrawArrays(primitive.mode, 0, count);
+
+              // 정점 attribute 배열 비활성화
+              glDisableVertexAttribArray(loc_a_position);
+              glDisableVertexAttribArray(loc_a_color);
+          }
+      
+    }
+
+    // 쉐이더 프로그램 사용해제
+    glUseProgram(0);
+}
+
 void draw_scene()
 {
   const std::vector<tinygltf::Node>& nodes = model.nodes;
@@ -675,11 +752,21 @@ void draw_scene()
   {
     for (size_t i = 0; i < scene.nodes.size(); ++i)
     {
+      int children = -1;
+      //chilren vector 개수
       const tinygltf::Node& node = nodes[scene.nodes[i]];
-      draw_node(node, mat_model);
+      if(node.children.size()<1)
+      {
+        render_object();
+      }
+      else
+      {
+        draw_node(node, mat_model);
+      }
     }
   }
 }
+
 
 int main(void)
 {
@@ -710,7 +797,7 @@ int main(void)
   init_state();
   init_shader_program();
 
-  load_model(model, "BoxTextured/BoxTextured.gltf");
+  load_model(model, "BoxTextured/Duck.gltf");
 
   // GPU의 VBO를 초기화하는 함수 호출
   init_buffer_objects();
