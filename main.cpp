@@ -19,6 +19,10 @@
 
 #include "../common/transform.hpp"
 
+#define MODELPATH "gltfmodel/SimpleMeshes.gltf"
+#define VSHADER_PATH "./shader/TriangleWithoutIndices_vertex.glsl"
+#define FSHADER_PATH "./shader/TriangleWithoutIndices_fragment.glsl"
+
 namespace kmuvcl {
   namespace math {
     template <typename T>
@@ -165,13 +169,13 @@ GLuint create_shader_from_file(const std::string& filename, GLuint shader_type)
 void init_shader_program()
 {
   GLuint vertex_shader
-    = create_shader_from_file("./shader/vertex1.glsl", GL_VERTEX_SHADER);
+    = create_shader_from_file(VSHADER_PATH, GL_VERTEX_SHADER);
 
   std::cout << "vertex_shader id: " << vertex_shader << std::endl;
   assert(vertex_shader != 0);
 
   GLuint fragment_shader
-    = create_shader_from_file("./shader/fragment1.glsl", GL_FRAGMENT_SHADER);
+    = create_shader_from_file(FSHADER_PATH, GL_FRAGMENT_SHADER);
 
   std::cout << "fragment_shader id: " << fragment_shader << std::endl;
   assert(fragment_shader != 0);
@@ -262,7 +266,8 @@ void init_buffer_objects()
         glGenBuffers(1, &index_buffer);
         glBindBuffer(bufferView.target, index_buffer);
         glBufferData(bufferView.target, bufferView.byteLength,
-            &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);}
+            &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+        }
 
       for (const auto& attrib : primitive.attributes)
       {
@@ -631,7 +636,7 @@ int main(void)
   init_state();
   init_shader_program();
 
-  load_model(model, "BoxTextured/sinmple_triangle.gltf");
+  load_model(model, MODELPATH);
 
   // GPU의 VBO를 초기화하는 함수 호출
 
