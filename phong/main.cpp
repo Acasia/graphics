@@ -850,8 +850,9 @@ int main(void)
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
 
+  //load_model(model, "BoxTextured/Duck.gltf");
   load_model(model, "BoxTextured/SimpleMeshes.gltf");
-   const std::vector<tinygltf::Node>& nodes = model.nodes;
+  const std::vector<tinygltf::Node>& nodes = model.nodes;
 
   for (const tinygltf::Scene& scene : model.scenes)
   {
@@ -871,12 +872,6 @@ int main(void)
 
   init_state();
   init_shader_program();
-  // std::cout << "a3" << std::endl;
-
-  load_model(model, "BoxTextured/TriangleWithoutIndices.gltf");
-  //load_model(model, "BoxTextured/Duck.gltf");
-  //load_model(model, "BoxTextured/Triangle.gltf");
-  // std::cout << "a4" << std::endl;
 
   // GPU의 VBO를 초기화하는 함수 호출
   
@@ -907,4 +902,3 @@ int main(void)
 
   return 0;
 }
-
