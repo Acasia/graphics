@@ -599,9 +599,6 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
   glUniformMatrix4fv(loc_u_PVM, 1, GL_FALSE, mat_PVM);
   glUniformMatrix4fv(loc_u_M, 1, GL_FALSE, mat_model);
 
-  // view_position_wc[0] = mat_view(0, 3);
-  // view_position_wc[1] = mat_view(1, 3);
-  // view_position_wc[2] = mat_view(2, 3);
   view_position_wc = camera.position();
   glUniform3fv(loc_u_view_position_wc, 1, view_position_wc);
   glUniform3fv(loc_u_light_position_wc, 1, light_position_wc);
@@ -783,10 +780,10 @@ void draw_scene()
             g_angle = 0.0f;
           }
         }
-        mat_model = kmuvcl::math::rotate(g_angle*0.7f, 0.0f, 0.0f, 1.0f);
+        // mat_model = kmuvcl::math::rotate(g_angle*0.7f, 0.0f, 0.0f, 1.0f);
         mat_model = kmuvcl::math::rotate(g_angle*1.0f, 0.0f, 1.0f, 0.0f)*mat_model;
-        mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
-        mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
+        // mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
+        // mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
         draw_node(node, mat_model);
       }
     }
