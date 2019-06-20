@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <cassert>
+#include <chrono>
 
 #include "Camera.h"
 
@@ -132,6 +133,8 @@ Camera  camera;
 float   g_aspect = 1.0f;
 float   g_angle = 0.0;
 int     camera_index = 0;
+bool    g_is_animation = false;
+std::chrono::time_point<std::chrono::system_clock> prev, curr;
 ////////////////////////////////////////////////////////////////////////////////
 /// 렌더링 관련 변수 및 함수
 ////////////////////////////////////////////////////////////////////////////////
@@ -411,6 +414,12 @@ void init_texture_objects()
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+  if (key == GLFW_KEY_P && action == GLFW_PRESS)
+  {
+    g_is_animation = !g_is_animation;
+    std::cout << (g_is_animation ? "animation" : "no animation") << std::endl;
+  }
+
 	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
 	{
 		camera_index = camera_index == 0 ? 1 : 0;
@@ -420,10 +429,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
       camera.move_left(0.1f);
   if (key == GLFW_KEY_D && action == GLFW_PRESS)
       camera.move_right(0.1f);
-  // if (key == GLFW_KEY_W && action == GLFW_PRESS)
-  //     camera.move_forward(0.1f);
-  // if (key == GLFW_KEY_S && action == GLFW_PRESS)
-  //     camera.move_backward(0.1f);
+
+  if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+      camera.move_forward(0.1f);
+  if (key == GLFW_KEY_X && action == GLFW_PRESS)
+      camera.move_backward(0.1f);
+
   if (key == GLFW_KEY_W && action == GLFW_PRESS)
       camera.move_up(0.1f);
   if (key == GLFW_KEY_S && action == GLFW_PRESS)
@@ -761,6 +772,21 @@ void draw_scene()
       }
       else
       {
+        curr = std::chrono::system_clock::now();
+        std::chrono::duration<float> elaped_seconds = (curr - prev);
+        prev = curr;
+        if (g_is_animation)
+        {            
+          g_angle += 30.0f * elaped_seconds.count();
+          if (g_angle > 25200.0f)
+          {
+            g_angle = 0.0f;
+          }
+        }
+        mat_model = kmuvcl::math::rotate(g_angle*0.7f, 0.0f, 0.0f, 1.0f);
+        mat_model = kmuvcl::math::rotate(g_angle*1.0f, 0.0f, 1.0f, 0.0f)*mat_model;
+        mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
+        mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
         draw_node(node, mat_model);
       }
     }
