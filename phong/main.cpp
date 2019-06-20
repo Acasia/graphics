@@ -1,4 +1,4 @@
-﻿#ifdef _WIN32
+#ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
@@ -468,10 +468,12 @@ void frambuffer_size_callback(GLFWwindow * window, int width, int height)
 
 void set_transform()
 {
+  std::cout << "c1" << std::endl;
   kmuvcl::math::vec3f eye = camera.position();
 	kmuvcl::math::vec3f up = camera.up_direction();
 	kmuvcl::math::vec3f center = eye + camera.front_direction();
 
+  std::cout << "c2" << std::endl;
 	mat_view = kmuvcl::math::lookAt(eye[0], eye[1], eye[2],
   center[0], center[1], center[2],
   up[0], up[1], up[2]);
@@ -493,43 +495,93 @@ void set_transform()
 		mat_proj = kmuvcl::math::perspective(camera.fovy(), g_aspect, n, f);
 	}
 
+  std::cout << "c3" << std::endl;
   ////////////////////////////////////////////////////////////////////////
 
   // mat_view.set_to_identity();
   // mat_view = kmuvcl::math::translate(0.5f, 0.5f, -2.0f);
 
   // mat_proj = kmuvcl::math::perspective(fovy, aspectRatio, znear, zfar);
+  std::cout << "e1" << std::endl;
   const std::vector<tinygltf::Node>& nodes = model.nodes;
-  const std::vector<tinygltf::Camera>& cameras = model.cameras;
-
-  const tinygltf::Camera& camera = cameras[camera_index];
-  if (camera.type.compare("perspective") == 0)
+  if (model.cameras.size() > 0)
   {
-    float fovy = kmuvcl::math::rad2deg(camera.perspective.yfov);
-    float aspectRatio = camera.perspective.aspectRatio;
-    float znear = camera.perspective.znear;
-    float zfar = camera.perspective.zfar;
+    // std::cout << "c1" << std::endl;
+    // kmuvcl::math::vec3f eye = camera.position();
+    // kmuvcl::math::vec3f up = camera.up_direction();
+    // kmuvcl::math::vec3f center = eye + camera.front_direction();
 
-    /*std::cout << "(camera.mode() == Camera::kPerspective)" << std::endl;
-    std::cout << "(fovy, aspect, n, f): " << fovy << ", " << aspectRatio << ", " << znear << ", " << zfar << std::endl;*/
+    // std::cout << "c2" << std::endl;
+    // mat_view = kmuvcl::math::lookAt(eye[0], eye[1], eye[2],
+    // center[0], center[1], center[2],
+    // up[0], up[1], up[2]);
+
+    // float n = camera.near();
+    // float f = camera.far();    
+
+    // if (camera.mode() == Camera::kOrtho)
+    // {
+    //   float l = camera.left();
+    //   float r = camera.right();
+    //   float b = camera.bottom();
+    //   float t = camera.top();	
+
+    //   mat_proj = kmuvcl::math::ortho(l, r, b, t, n, f);
+    // }
+    // else if (camera.mode() == Camera::kPerspective)
+    // {
+    //   mat_proj = kmuvcl::math::perspective(camera.fovy(), g_aspect, n, f);
+    // }
+
+    // std::cout << "c3" << std::endl;
+    const std::vector<tinygltf::Camera>& cameras = model.cameras;
+    const tinygltf::Camera& camera = cameras[camera_index];
+    std::cout << "e2" << std::endl;
+    if (camera.type.compare("perspective") == 0)
+    {
+      float fovy = kmuvcl::math::rad2deg(camera.perspective.yfov);
+      float aspectRatio = camera.perspective.aspectRatio;
+      float znear = camera.perspective.znear;
+      float zfar = camera.perspective.zfar;
+
+      /*std::cout << "(camera.mode() == Camera::kPerspective)" << std::endl;
+      std::cout << "(fovy, aspect, n, f): " << fovy << ", " << aspectRatio << ", " << znear << ", " << zfar << std::endl;*/
+      mat_proj = kmuvcl::math::perspective(fovy, aspectRatio, znear, zfar);
+    }
+    else // (camera.type.compare("orthographic") == 0)
+    {
+      float xmag = camera.orthographic.xmag;
+      float ymag = camera.orthographic.ymag;
+      float znear = camera.orthographic.znear;
+      float zfar = camera.orthographic.zfar;
+
+      /*std::cout << "(camera.mode() == Camera::kOrtho)" << std::endl;
+      std::cout << "(xmag, ymag, n, f): " << xmag << ", " << ymag << ", " << znear << ", " << zfar << std::endl;*/
+      mat_proj = kmuvcl::math::ortho(-xmag, xmag, -ymag, ymag, znear, zfar);
+    }
+
+  }
+  else
+  {
+    std::cout << "e3" << std::endl;
+    //mat_view.set_to_identity();
+    mat_view = kmuvcl::math::translate(0.0f, 0.0f, -2.0f);
+
+    //mat_proj.set_to_identity();
+    float fovy = 70.0f;
+    float aspectRatio = 1.0f;
+    float znear = 0.01f;
+    float zfar = 100.0f;
+
     mat_proj = kmuvcl::math::perspective(fovy, aspectRatio, znear, zfar);
   }
-  else // (camera.type.compare("orthographic") == 0)
-  {
-    float xmag = camera.orthographic.xmag;
-    float ymag = camera.orthographic.ymag;
-    float znear = camera.orthographic.znear;
-    float zfar = camera.orthographic.zfar;
-
-    /*std::cout << "(camera.mode() == Camera::kOrtho)" << std::endl;
-    std::cout << "(xmag, ymag, n, f): " << xmag << ", " << ymag << ", " << znear << ", " << zfar << std::endl;*/
-    mat_proj = kmuvcl::math::ortho(-xmag, xmag, -ymag, ymag, znear, zfar);
-  }
+  std::cout << "c4" << std::endl;
 
 }
 
 void draw_node(const tinygltf::Node& node, kmuvcl::math::mat4f mat_model)
 {
+  // std::cout << "b3" << std::endl;
   const std::vector<tinygltf::Node>& nodes = model.nodes;
   const std::vector<tinygltf::Mesh>& meshes = model.meshes;
 
@@ -547,7 +599,7 @@ void draw_node(const tinygltf::Node& node, kmuvcl::math::mat4f mat_model)
     mat_model = mat_model * kmuvcl::math::translate<float>(
       node.translation[0], node.translation[1], node.translation[2]);
   }
-
+  // std::cout << "b4" << std::endl;
   if (node.matrix.size() == 16)
   {
     kmuvcl::math::mat4f mat_node;
@@ -573,27 +625,32 @@ void draw_node(const tinygltf::Node& node, kmuvcl::math::mat4f mat_model)
 
     mat_model = mat_model * mat_node;
   }
-
+  // std::cout << "b5" << std::endl;
   if (node.mesh > -1)
   {
     draw_mesh(meshes[node.mesh], mat_model);
+    // std::cout << "b7" << std::endl;
+
   }
 
   for (size_t i = 0; i < node.children.size(); ++i)
   {
     draw_node(nodes[node.children[i]], mat_model);
+    // std::cout << "b8" << std::endl;
   }
+  // std::cout << "b6" << std::endl;
 }
 
 void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
 {
+  // std::cout << "b9" << std::endl;
   const std::vector<tinygltf::Material>& materials = model.materials;
   const std::vector<tinygltf::Texture>& textures = model.textures;
   const std::vector<tinygltf::Accessor>& accessors = model.accessors;
   const std::vector<tinygltf::BufferView>& bufferViews = model.bufferViews;
 
   glUseProgram(program);
-
+  // std::cout << "b10" << std::endl;
   mat_PVM = mat_proj * mat_view * mat_model;
 
   glUniformMatrix4fv(loc_u_PVM, 1, GL_FALSE, mat_PVM);
@@ -608,7 +665,7 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
 
   glUniform4fv(loc_u_material_specular, 1, material_specular);
   glUniform1f(loc_u_material_shininess, material_shininess);
-  
+  // std::cout << "b11" << std::endl;
   for (const tinygltf::Primitive& primitive : mesh.primitives)
   {
     if (primitive.material > -1)
@@ -628,7 +685,7 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
         }
       }
     }
-
+    // std::cout << "b12" << std::endl;
     for (const std::pair<std::string, int>& attrib : primitive.attributes)
     {
       const int accessor_index = attrib.second;
@@ -664,7 +721,7 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
           BUFFER_OFFSET(accessor.byteOffset));
       }
     }
-
+    // std::cout << "b13" << std::endl;
     const tinygltf::Accessor& index_accessor = accessors[primitive.indices];
     const tinygltf::BufferView& bufferView = bufferViews[index_accessor.bufferView];    
 
@@ -679,8 +736,10 @@ void draw_mesh(const tinygltf::Mesh& mesh, const kmuvcl::math::mat4f& mat_model)
     glDisableVertexAttribArray(loc_a_texcoord);
     glDisableVertexAttribArray(loc_a_normal);
     glDisableVertexAttribArray(loc_a_position);
+    // std::cout << "b14" << std::endl;
   }
   glUseProgram(0);
+  // std::cout << "b15" << std::endl;
 }
 
 //2D render
@@ -763,9 +822,10 @@ void draw_scene()
       int children = -1;
       //chilren vector 개수
       const tinygltf::Node& node = nodes[scene.nodes[i]];
-      if(node.children.size()<1)
+      if(node.children.size() < 0 || node.children.size() < 0)
       {
         render_object();
+        // std::cout << "b1" << std::endl;
       }
       else
       {
@@ -785,6 +845,7 @@ void draw_scene()
         // mat_model = kmuvcl::math::rotate(g_angle*0.5f, 1.0f, 0.0f, 0.0f)*mat_model;
         // mat_model = kmuvcl::math::translate(0.0f, 0.0f, -4.0f)*mat_model;
         draw_node(node, mat_model);
+        // std::cout << "b2" << std::endl;
       }
     }
   }
@@ -809,6 +870,7 @@ int main(void)
 
   // Make the current OpenGL context as one in the window
   glfwMakeContextCurrent(window);
+  // std::cout << "a1" << std::endl;
 
   // Initialize GLEW library
   if (glewInit() != GLEW_OK)
@@ -818,35 +880,47 @@ int main(void)
   std::cout << glGetString(GL_VERSION) << std::endl;
 
   init_state();
+  // std::cout << "a2" << std::endl;
   init_shader_program();
+  // std::cout << "a3" << std::endl;
 
-  load_model(model, "BoxTextured/Duck.gltf");
+  load_model(model, "BoxTextured/TriangleWithoutIndices.gltf");
+  // std::cout << "a4" << std::endl;
 
   // GPU의 VBO를 초기화하는 함수 호출
   init_buffer_objects();
+  // std::cout << "a5" << std::endl;
   init_texture_objects();
+  // std::cout << "a6" << std::endl;
 
   // key_callback
   glfwSetKeyCallback(window, key_callback);
+  // std::cout << "a7" << std::endl;
   glfwSetFramebufferSizeCallback(window, frambuffer_size_callback);
+  // std::cout << "a8" << std::endl;
 
   // Loop until the user closes the window
   while (!glfwWindowShouldClose(window))
   {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // std::cout << "a9" << std::endl;
 
     set_transform();
     draw_scene();
+    // std::cout << "a10" << std::endl;
 
     // Swap front and back buffers
     glfwSwapBuffers(window);
+    // std::cout << "a11" << std::endl;
 
     // Poll for and process events
     glfwPollEvents();
+    // std::cout << "a12" << std::endl;
   }
 
   glfwTerminate();
+  // std::cout << "a3" << std::endl;
 
   return 0;
 }
