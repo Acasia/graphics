@@ -35,6 +35,19 @@
 //#define GLTF_MODEL "BoxTextured/Duck.gltf"
 //<NOT WORKING>#define GLTF_MODEL "BoxTextured/2CylinderEngine.gltf"
 
+
+//test_gltf에서 들어가기
+// #define GLTF_MODEL "test_gltf/01_TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf"
+// #define GLTF_MODEL "test_gltf/02_Cameras/glTF/Cameras.gltf"
+// #define GLTF_MODEL "test_gltf/03_Box/glTF/Box.gltf"
+// #define GLTF_MODEL "test_gltf/04_BoxTextured/glTF/BoxTextured.gltf"
+// #define GLTF_MODEL "test_gltf/05_BoxVertexColors/glTF/BoxVertexColors.gltf" // 컬러가 안나옴
+// #define GLTF_MODEL "test_gltf/06_Duck/glTF/Duck.gltf"
+// #define GLTF_MODEL "test_gltf/07_BrainStem/glTF/BrainStem.gltf"
+// #define GLTF_MODEL "test_gltf/08_Lantern/glTF/Lantern.gltf" //오류난다
+// #define GLTF_MODEL "test_gltf/09_TextureSettingsTest/glTF/TextureSettingsTest.gltf"
+// #define GLTF_MODEL "test_gltf/10_Sponza/glTF/Sponza.gltf" // 아무것도 안보임
+
 #include "../glTF/tiny_gltf.h"
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
