@@ -426,7 +426,6 @@ void init_texture_objects()
 {
   const std::vector<tinygltf::Texture>& textures = model.textures;
   const std::vector<tinygltf::Image>& images = model.images;
-  const std::vector<tinygltf::Sampler>& samplers = model.samplers;
 
   for (const tinygltf::Texture& texture : textures)
   {
@@ -434,7 +433,6 @@ void init_texture_objects()
     glBindTexture(GL_TEXTURE_2D, texid);
 
     const tinygltf::Image& image = images[texture.source];
-    const tinygltf::Sampler& sampler = samplers[texture.sampler];
 
     GLenum format = GL_RGBA;
     if (image.component == 1) {
@@ -446,9 +444,9 @@ void init_texture_objects()
     else if (image.component == 3) {
       format = GL_RGB;
     }
-    else if (image.component == 4){
-      format = GL_ALPHA;
-    }
+    // else if (image.component == 4){
+    //   format = GL_ALPHA;
+    // }
     GLenum type = GL_UNSIGNED_BYTE;
     if (image.bits == 16) {
       type = GL_UNSIGNED_SHORT;
@@ -461,13 +459,15 @@ void init_texture_objects()
     //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, sampler.magFilter);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    if(samplers.size())
+    if( model.samplers.size() > 0)
     {
+      const std::vector<tinygltf::Sampler>& samplers = model.samplers;
+      const tinygltf::Sampler& sampler = samplers[texture.sampler];
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sampler.wrapS);
       std::cout << "error" <<std::endl;
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, sampler.wrapT);
     }
-    //glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
   }
 }
 
@@ -883,13 +883,11 @@ int main(int argc, char** argv)
 
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
+  
   std::string argument = argv[1];
-  // for(int i=0; i < argc ; i++)
-  // {
-  //   argument.append(argv[i]);
-  // }
   load_model(model, argument );
-   const std::vector<tinygltf::Node>& nodes = model.nodes;
+
+  const std::vector<tinygltf::Node>& nodes = model.nodes;
 
   for (const tinygltf::Scene& scene : model.scenes)
   {
@@ -927,10 +925,9 @@ int main(int argc, char** argv)
   {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    set_transform();
     if(witch)
     {
-      set_transform();
       draw_scene();
     }
     else{
