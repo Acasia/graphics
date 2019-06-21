@@ -852,7 +852,7 @@ void draw_scene()
 }
 
 
-int main(void)
+int main(int argc, char** argv)
 {
   GLFWwindow* window;
 
@@ -878,8 +878,12 @@ int main(void)
 
   // Print out the OpenGL version supported by the graphics card in my PC
   std::cout << glGetString(GL_VERSION) << std::endl;
-  
-  load_model(model, "BoxTextured/Duck.gltf");
+  std::string argument = argv[1];
+  // for(int i=0; i < argc ; i++)
+  // {
+  //   argument.append(argv[i]);
+  // }
+  load_model(model, argument );
    const std::vector<tinygltf::Node>& nodes = model.nodes;
 
   for (const tinygltf::Scene& scene : model.scenes)
