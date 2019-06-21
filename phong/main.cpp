@@ -446,7 +446,9 @@ void init_texture_objects()
     else if (image.component == 3) {
       format = GL_RGB;
     }
-
+    else if (image.component == 4){
+      format = GL_ALPHA;
+    }
     GLenum type = GL_UNSIGNED_BYTE;
     if (image.bits == 16) {
       type = GL_UNSIGNED_SHORT;
@@ -459,9 +461,12 @@ void init_texture_objects()
     //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, sampler.magFilter);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sampler.wrapS);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, sampler.wrapT);
-
+    if(samplers.size())
+    {
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sampler.wrapS);
+      std::cout << "error" <<std::endl;
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, sampler.wrapT);
+    }
     //glGenerateMipmap(GL_TEXTURE_2D);
   }
 }
